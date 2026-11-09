@@ -621,6 +621,83 @@ body{-webkit-user-select:none;user-select:none}
       <label>Idle Demo (FS) <select id="idleSel"></select></label>
     </div>
 
+    <!-- Subcard 1B: Musical Tone Synthesizer, Scale/Mode Quantizer & Tone Modulation -->
+    <div class="subcard">
+      <span class="subhead">1B. Musical Scales, Modes &amp; Tone Modulation</span>
+      <label title="Musical Scale or Greek Mode assigned across the keys">
+        🎼 Scale / Mode
+        <select id="scaleModeSel" style="font-weight:800;border-color:var(--accent)">
+          <option value="off">Standard Clicks (No Musical Scale)</option>
+          <optgroup label="Chromatic, Major &amp; Minor">
+            <option value="chromatic">Chromatic (All 12 Semitones)</option>
+            <option value="major" selected>Major (Ionian — Bright)</option>
+            <option value="minor">Natural Minor (Aeolian)</option>
+            <option value="harm-minor">Harmonic Minor</option>
+            <option value="mel-minor">Melodic Minor</option>
+          </optgroup>
+          <optgroup label="The 7 Diatonic Modes">
+            <option value="ionian">Ionian Mode (I — Major)</option>
+            <option value="dorian">Dorian Mode (II — Soulful Minor)</option>
+            <option value="phrygian">Phrygian Mode (III — Exotic/Spanish)</option>
+            <option value="lydian">Lydian Mode (IV — Dreamy/Raised 4th)</option>
+            <option value="mixolydian">Mixolydian Mode (V — Blues/Rock Dom)</option>
+            <option value="aeolian">Aeolian Mode (VI — Natural Minor)</option>
+            <option value="locrian">Locrian Mode (VII — Diminished)</option>
+          </optgroup>
+          <optgroup label="Pentatonic &amp; Blues">
+            <option value="pent-maj">Major Pentatonic</option>
+            <option value="pent-min">Minor Pentatonic</option>
+            <option value="blues">Hexatonic Blues Scale</option>
+          </optgroup>
+        </select>
+      </label>
+
+      <label title="Root Musical Key (Tonic)">
+        🎹 Key
+        <select id="rootNoteSel" style="font-weight:800">
+          <option value="0">C</option><option value="1">C# / Db</option><option value="2">D</option>
+          <option value="3">D# / Eb</option><option value="4">E</option><option value="5">F</option>
+          <option value="6">F# / Gb</option><option value="7">G</option><option value="8">G# / Ab</option>
+          <option value="9">A</option><option value="10">A# / Bb</option><option value="11">B</option>
+        </select>
+      </label>
+
+      <label title="Starting Octave">
+        Octave
+        <select id="rootOctSel">
+          <option value="2">Oct 2 (Deep Bass)</option>
+          <option value="3">Oct 3 (Warm Mid)</option>
+          <option value="4" selected>Oct 4 (Middle C)</option>
+          <option value="5">Oct 5 (Bright Lead)</option>
+        </select>
+      </label>
+
+      <label title="Synthesizer Timbre / Waveform">
+        Synth Wave
+        <select id="synthWaveSel">
+          <option value="fm-epiano">FM Electric Piano</option>
+          <option value="warm-saw">Warm Analog Saw</option>
+          <option value="triangle">Pure Triangle Flute</option>
+          <option value="square">Retro Square Lead</option>
+          <option value="sine">Sub Sine Bell</option>
+        </select>
+      </label>
+
+      <label title="Vibrato LFO Depth (Modulates pitch in real time)">
+        〰️ Vibrato <input type="range" id="vibDepthIn" min="0" max="80" value="18" style="width:65px">
+      </label>
+      <label title="Vibrato LFO Speed (Hz)">
+        Rate <input type="range" id="vibRateIn" min="1" max="14" value="6" style="width:55px">
+      </label>
+      <label title="Pitch Bend / Glide Envelope (Semitones)">
+        Bend <input type="range" id="pitchBendIn" min="-12" max="12" value="0" style="width:65px">
+      </label>
+      <label title="Note Sustain / Release Length">
+        Sustain <input type="range" id="sustainIn" min="8" max="140" value="42" style="width:65px">
+      </label>
+      <button id="showNotesOnCapsBtn" aria-pressed="false" class="chip" style="cursor:pointer">🎵 Note Labels: Off</button>
+    </div>
+
     <!-- Subcard 2: UI Theme Presets + Custom UI Theme Builder (BG, Panel, Font Color, Plate) -->
     <div class="subcard">
       <span class="subhead">2. UI Theme &amp; Colors</span>
@@ -654,9 +731,10 @@ body{-webkit-user-select:none;user-select:none}
     <div class="subcard">
       <span class="subhead">3. Key &amp; Palette Editor</span>
       <button id="editBtn" aria-pressed="false">Edit keys: off</button>
-      <div id="edBox" style="display:flex;align-items:center;gap:6px" hidden>
+      <div id="edBox" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" hidden>
         <input id="edLabel" maxlength="8" size="8" aria-label="Key label" placeholder="Label">
         <input id="edColor" type="color" aria-label="Key color">
+        <label title="Assign custom semitone / note offset to this specific key">Note <select id="edNoteSel"></select></label>
         <button id="edReset">Reset label</button>
       </div>
       <input id="tname" maxlength="20" placeholder="New key palette name" aria-label="Palette name" style="width:155px">
@@ -954,6 +1032,8 @@ body{-webkit-user-select:none;user-select:none}
     <button id="fsSlidersToggle" class="chip">Sliders: Off</button>
     <button id="fsReadoutToggle" class="chip">Readout: On</button>
     <button id="fsDmodeCycle" class="chip">Dial: Hue</button>
+    <button id="fsScaleCycleBtn" class="chip" style="border-color:var(--accent);color:var(--accent)">🎼 Scale: Major</button>
+    <button id="fsRootCycleBtn" class="chip">🎹 Key: C4</button>
     <button id="fsSoundCycle" class="chip">Sound: Cherry</button>
     <button id="fsUiThemeCycle" class="chip">UI: Dark</button>
     <button id="fsEditToggle" class="chip">Edit Keys: Off</button>
@@ -1059,6 +1139,7 @@ var PLATES={
 var S={
   rows:2,cols:10,ti:0,keys:[],labels:[],custom:[],
   conn:"windows",profile:"sheets",fmt:"hex",copy:true,sound:true,sndType:"cherry",
+  scaleMode:"major",rootNote:0,rootOct:4,synthWave:"fm-epiano",vibDepth:18,vibRate:6,pitchBend:0,sustain:42,showNotes:false,keyNotes:[],
   mode:"dark",customUiThemes:[],cBg:"#07090E",cPanel:"#12141A",cText:"#F1F5F9",cPlate:"#4B505C",
   font:"system",overlay:"ui-sophisticated",plateMat:"theme",bank:0,banks:[null,null,null],history:["#10B981","#38BDF8","#F59E0B","#EF4444","#8B5CF6","#EC4899"],savedConfigs:[],
   idle:0,assign:false,edit:false,sel:-1,hue:160,hex:"#10B981",shown:"#10B981",
@@ -1196,6 +1277,16 @@ function loadStateObject(sv){
   if(["sheets","word","design","dmx"].indexOf(sv.profile)>-1)S.profile=sv.profile;else S.profile="sheets";
   if(["hex","rgb","hsl","win"].indexOf(sv.fmt)>-1)S.fmt=sv.fmt;
   if(["cherry","linear","bubble","beeps","scifi","subtle"].indexOf(sv.sndType)>-1)S.sndType=sv.sndType;
+  if(typeof sv.scaleMode==="string")S.scaleMode=sv.scaleMode;
+  if(typeof sv.rootNote==="number")S.rootNote=cl(sv.rootNote,0,11,0);
+  if(typeof sv.rootOct==="number")S.rootOct=cl(sv.rootOct,2,5,4);
+  if(typeof sv.synthWave==="string")S.synthWave=sv.synthWave;
+  if(typeof sv.vibDepth==="number")S.vibDepth=cl(sv.vibDepth,0,80,18);
+  if(typeof sv.vibRate==="number")S.vibRate=cl(sv.vibRate,1,14,6);
+  if(typeof sv.pitchBend==="number")S.pitchBend=cl(sv.pitchBend,-12,12,0);
+  if(typeof sv.sustain==="number")S.sustain=cl(sv.sustain,8,140,42);
+  if(typeof sv.showNotes==="boolean")S.showNotes=sv.showNotes;
+  if(Array.isArray(sv.keyNotes))S.keyNotes=sv.keyNotes;
   if(FONTS[sv.font])S.font=sv.font;
   if(typeof sv.overlay==="string")S.overlay=sv.overlay;
   if(["off","flame","plasma","line","gauge","matrix-num","dna","lava","bars"].indexOf(sv.keyFx)>-1)S.keyFx=sv.keyFx;
@@ -1227,7 +1318,7 @@ if(!S.keys.length)S.keys=themeColors(themes()[S.ti],S.rows*S.cols);
 function serializeState(){
   var o={
     rows:S.rows,cols:S.cols,ti:S.ti,keys:S.keys,labels:S.labels,custom:S.custom,
-    conn:S.conn,officePaste:S.officePaste,bold:S.bold,italic:S.italic,underline:S.underline,emojiMode:S.emojiMode,emojiCat:S.emojiCat,profile:S.profile,fmt:S.fmt,copy:S.copy,sound:S.sound,sndType:S.sndType,
+    conn:S.conn,scaleMode:S.scaleMode,rootNote:S.rootNote,rootOct:S.rootOct,synthWave:S.synthWave,vibDepth:S.vibDepth,vibRate:S.vibRate,pitchBend:S.pitchBend,sustain:S.sustain,showNotes:S.showNotes,keyNotes:S.keyNotes,officePaste:S.officePaste,bold:S.bold,italic:S.italic,underline:S.underline,emojiMode:S.emojiMode,emojiCat:S.emojiCat,profile:S.profile,fmt:S.fmt,copy:S.copy,sound:S.sound,sndType:S.sndType,
     mode:S.mode,customUiThemes:S.customUiThemes,cBg:S.cBg,cPanel:S.cPanel,cText:S.cText,cPlate:S.cPlate,
     font:S.font,overlay:S.overlay,keyFx:S.keyFx,plateMat:S.plateMat,history:S.history,banks:S.banks,savedConfigs:S.savedConfigs,idle:S.idle,demoPattern:S.demoPattern,demoSpeed:S.demoSpeed,customFrames:S.customFrames
   };
@@ -1237,6 +1328,120 @@ function serializeState(){
 function save(){try{localStorage.setItem("hawkchroma_v4",JSON.stringify(serializeState()));syncSharedEcosystemUi()}catch(e){}}
 
 /* Multi-Profile Web Audio Synthesizer */
+
+/* ========================================================================== */
+/* MUSICAL SCALES, DIATONIC MODES & REAL-TIME TONE MODULATION SYNTHESIZER     */
+/* ========================================================================== */
+var NOTE_NAMES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var SCALES={
+  "chromatic":[0,1,2,3,4,5,6,7,8,9,10,11],
+  "major":[0,2,4,5,7,9,11],
+  "ionian":[0,2,4,5,7,9,11],
+  "minor":[0,2,3,5,7,8,10],
+  "aeolian":[0,2,3,5,7,8,10],
+  "harm-minor":[0,2,3,5,7,8,11],
+  "mel-minor":[0,2,3,5,7,9,11],
+  "dorian":[0,2,3,5,7,9,10],
+  "phrygian":[0,1,3,5,7,8,10],
+  "lydian":[0,2,4,6,7,9,11],
+  "mixolydian":[0,2,4,5,7,9,10],
+  "locrian":[0,1,3,5,6,8,10],
+  "pent-maj":[0,2,4,7,9],
+  "pent-min":[0,3,5,7,10],
+  "blues":[0,3,5,6,7,10]
+};
+
+function getKeyMidiNote(i){
+  // If user assigned a custom MIDI note to this specific key in Edit Keys mode, use it
+  if(S.keyNotes&&typeof S.keyNotes[i]==="number"&&S.keyNotes[i]>0){
+    return S.keyNotes[i];
+  }
+  var intervals=SCALES[S.scaleMode]||SCALES.major;
+  var octOffset=Math.floor(i/intervals.length);
+  var deg=i%intervals.length;
+  var baseMidi=(S.rootOct+1)*12+S.rootNote;
+  return baseMidi+(octOffset*12)+intervals[deg];
+}
+
+function getNoteLabel(i){
+  var midi=getKeyMidiNote(i);
+  var name=NOTE_NAMES[midi%12];
+  var oct=Math.floor(midi/12)-1;
+  return name+oct;
+}
+
+function getNoteFreq(i){
+  var midi=getKeyMidiNote(i);
+  // Apply dial modulation offset if dial is in saturation/lightness or pitch bend
+  return 440*Math.pow(2,(midi-69)/12);
+}
+
+function playMusicalNote(i){
+  if(!S.sound)return;
+  if(S.scaleMode==="off"){
+    click(1120+(i%5)*35,0.04);
+    return;
+  }
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!actx)actx=new AC();if(actx.state==="suspended")actx.resume();
+    var t=actx.currentTime;
+    var baseFreq=getNoteFreq(i);
+    var dur=Math.max(0.08,(S.sustain||42)/100);
+    var bendSemis=S.pitchBend||0;
+    var startFreq=bendSemis!==0?baseFreq*Math.pow(2,bendSemis/12):baseFreq;
+
+    var osc=actx.createOscillator();
+    var gain=actx.createGain();
+    var wave=S.synthWave||"fm-epiano";
+
+    if(wave==="fm-epiano"){
+      osc.type="sine";
+      // Add FM modulator harmonic bell overtone
+      var modOsc=actx.createOscillator(),modGain=actx.createGain();
+      modOsc.type="sine";
+      modOsc.frequency.setValueAtTime(baseFreq*2,t);
+      modGain.gain.setValueAtTime(baseFreq*0.85,t);
+      modGain.gain.exponentialRampToValueAtTime(1,t+dur*0.8);
+      modOsc.connect(modGain);modGain.connect(osc.frequency);
+      modOsc.start(t);modOsc.stop(t+dur);
+    }else if(wave==="warm-saw"){
+      osc.type="sawtooth";
+    }else if(wave==="triangle"){
+      osc.type="triangle";
+    }else if(wave==="square"){
+      osc.type="square";
+    }else{
+      osc.type="sine";
+    }
+
+    osc.frequency.setValueAtTime(startFreq,t);
+    if(bendSemis!==0){
+      osc.frequency.exponentialRampToValueAtTime(baseFreq,t+Math.min(0.18,dur*0.6));
+    }
+
+    // Real-Time Vibrato LFO Modulation
+    if(S.vibDepth>0){
+      var lfo=actx.createOscillator(),lfoGain=actx.createGain();
+      lfo.type="sine";
+      lfo.frequency.setValueAtTime(S.vibRate||6,t);
+      // Convert cents to Hz modulation depth
+      var depthHz=baseFreq*(Math.pow(2,(S.vibDepth/1200))-1);
+      lfoGain.gain.setValueAtTime(depthHz,t);
+      lfo.connect(lfoGain);lfoGain.connect(osc.frequency);
+      lfo.start(t);lfo.stop(t+dur);
+    }
+
+    var peakGain=wave==="square"||wave==="warm-saw"?0.14:0.24;
+    gain.gain.setValueAtTime(0.001,t);
+    gain.gain.linearRampToValueAtTime(peakGain,t+0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0008,t+dur);
+
+    osc.connect(gain);gain.connect(actx.destination);
+    osc.start(t);osc.stop(t+dur);
+  }catch(e){}
+}
+
 var actx=null;
 function click(f,d){
   if(!S.sound)return;
@@ -1302,174 +1507,4 @@ function copyText(t,hex,label){return new Promise(function(res){
         dv.innerHTML=richHtml;
         dv.style.cssText="position:fixed;left:-9999px;top:0;opacity:0";
         D.body.appendChild(dv);
-        var rng=D.createRange();rng.selectNodeContents(dv);
-        var sel=window.getSelection();sel.removeAllRanges();sel.addRange(rng);
-        var ok1=D.execCommand("copy");
-        sel.removeAllRanges();D.body.removeChild(dv);
-        if(ok1){res(true);return}
-      }
-      var a=D.createElement("textarea");a.value=outText;a.setAttribute("readonly","");
-      a.style.cssText="position:fixed;opacity:0;top:0";D.body.appendChild(a);
-      a.select();a.setSelectionRange(0,outText.length);
-      var ok=D.execCommand("copy");D.body.removeChild(a);res(!!ok);
-    }catch(e){res(false)}
-  }
-
-  try{
-    if(navigator.clipboard&&window.isSecureContext){
-      if(richHtml&&typeof ClipboardItem!=="undefined"&&navigator.clipboard.write){
-        var item=new ClipboardItem({
-          "text/plain":new Blob([outText],{type:"text/plain"}),
-          "text/html":new Blob([richHtml],{type:"text/html"})
-        });
-        navigator.clipboard.write([item]).then(function(){res(true)},function(){
-          navigator.clipboard.writeText(outText).then(function(){res(true)},legacy);
-        });
-      }else{
-        navigator.clipboard.writeText(outText).then(function(){res(true)},legacy);
-      }
-    }else{
-      legacy();
-    }
-  }catch(e){legacy()}
-})}
-
-/* Grid Construction & Painting */
-var cells=[];
-function getEmojiItem(i){
-  var set=EMOJI_SETS[S.emojiCat]||EMOJI_SETS[0];
-  return set[i%set.length]||["😀","EMOJI"];
-}
-function def(i){
-  if(S.emojiMode){var em=getEmojiItem(i);return em[0]+" "+em[1]}
-  var r=(i/S.cols)|0,c=i%S.cols,pr=LG[S.profile]||LG.any;return r<2&&c<10?pr[r][c]:"K"+(i+1);
-}
-function lab(i){return S.emojiMode?def(i):(S.labels[i]||def(i))}
-function tint(i,hex){
-  var b=cells[i];if(!b)return;
-  b.style.setProperty("--k",hex);
-  b.children[0].children[3].textContent=S.emojiMode?getEmojiItem(i)[1]:hexTxt(hex);
-}
-function paint(i){
-  var b=cells[i];if(!b)return;
-  tint(i,S.keys[i]);
-  var l=S.emojiMode?getEmojiItem(i)[0]:lab(i);
-  var spanEl=b.children[0].children[2];
-  spanEl.textContent=l;
-  spanEl.style.fontSize=S.emojiMode?"clamp(14px,3.2vw,20px)":"";
-  spanEl.style.fontWeight=S.bold?"800":"500";
-  spanEl.style.fontStyle=S.italic?"italic":"normal";
-  spanEl.style.textDecoration=S.underline?"underline":"none";
-  b.setAttribute("aria-label",lab(i)+" "+S.keys[i]);
-  b.classList.toggle("sel",S.edit&&i===S.sel);
-}
-function paintAll(){for(var i=0;i<cells.length;i++)paint(i)}
-function build(){var g=$("grid"),n=S.rows*S.cols;g.textContent="";cells=[];
-g.style.setProperty("--cols",S.cols);g.style.setProperty("--rows",S.rows);g.style.setProperty("--kh",S.rows>3?"56px":"76px");g.classList.toggle("dense",S.cols>6);
-for(var i=0;i<n;i++){var b=D.createElement("button");b.type="button";b.className="key";b.style.setProperty("--ki",i%12);b.innerHTML='<div class="cap"><div class="fx-box"></div><b></b><span></span><small></small></div>';
-(function(i){b.addEventListener("click",function(){press(i)})})(i);g.appendChild(b);cells.push(b)}
-paintAll()}
-function setGrid(){var n=S.rows*S.cols,base=themeColors(themes()[S.ti]||B[0],n);S.keys=base.map(function(h,i){return S.keys[i]||h});S.labels=S.labels.slice(0,n);S.sel=-1;build();syncEd();save()}
-
-var tT=0;
-function toast(m){$("toast").textContent=m;clearTimeout(tT);tT=setTimeout(function(){$("toast").textContent=S.assign?"Assign mode: tap a key to save":"Tap a key to copy its color"},2400)}
-function setRing(h){var s=$("ring").style;s.setProperty("--rb",h+"60");s.setProperty("--rc",h)}
-function updateDragChip(hex,t){
-  var dc=$("dragSwatchChip");if(!dc)return;
-  dc.style.background=hex;
-  dc.style.borderColor="#ffffff";
-  dc.style.color=hsl(hex).l>62?"#0F172A":"#FFFFFF";
-  dc.innerHTML="<span>✋ Drag "+hexTxt(hex)+"</span>";
-}
-
-function announce(hex,label,doCopy,src){
-  var t=(S.officePaste==="raw-hex")?hex.replace("#","").toUpperCase():fmt(hex,label);
-  S.shown=hex.toUpperCase();updRo();
-  $("sw").style.background=hex;$("out").textContent=t;$("out").style.color=hex;setRing(hex);
-  updateDragChip(hex,t);
-  updateWcagAndHistory(hex);
-  sendExternalPacket(hex,label,t,src||"KEY");
-  syncSharedEcosystemUi();
-  if(activeSuite==="shine"){var gs=$("hsGroupSel").value;if(gs==="all")hsGroupCols=[hex,hex,hex];else hsGroupCols[+gs||0]=hex;}
-  if(doCopy&&S.copy){
-    copyText(t,hex,label).then(function(ok){
-      var pMode=S.officePaste==="rich-cell"?"Rich Office Fill":S.officePaste==="rich-text"?"Rich Colored Text":S.officePaste==="raw-hex"?"Raw 6-Digit Hex":"Text";
-      toast(ok?"Copied "+t+" ["+pMode+"] — Paste or Drag into Word/Excel/PPT!":"Tap or drag the '✋ Drag' chip to copy.");
-    });
-  }else{
-    toast(label+" "+t);
-  }
-}
-
-function press(i){
-  click(1120+(i%5)*35,.04);buzz(18);
-  var b=cells[i];if(b){b.classList.add("hit");setTimeout(function(){b.classList.remove("hit")},140)}
-  if(S.edit){S.sel=i;syncEd();paintAll();return}
-  if(S.assign){S.keys[i]=S.hex;setAssign(false);paint(i);initKeyFxDom();save();announce(S.hex,lab(i),true,"ASSIGN");return}
-  if(S.emojiMode){
-    var em=getEmojiItem(i);
-    var hex=S.keys[i];
-    S.shown=hex;updRo();$("sw").style.background=hex;$("out").textContent=em[0]+" "+em[1];$("out").style.color=hex;setRing(hex);
-    updateDragChip(hex,em[0]);
-    sendExternalPacket(hex,em[1],em[0],"EMOJI");
-    if(S.copy){
-      copyText(em[0],hex,em[1]).then(function(ok){
-        toast(ok?"Copied Emoji "+em[0]+" ("+em[1]+") — Paste into Word/Outlook/Gmail!":"Tap Drag chip to copy "+em[0]);
-      });
-    }
-    return;
-  }
-  announce(S.keys[i],lab(i),true,"KEY");
-}
-
-/* Key Editor */
-function syncEd(){var on=S.edit&&S.sel>=0;$("edBox").hidden=!on;if(on){$("edLabel").value=S.labels[S.sel]||"";$("edLabel").placeholder=def(S.sel);$("edColor").value=S.keys[S.sel].toLowerCase()}}
-function toggleEditMode(){
-  S.edit=!S.edit;if(S.edit)setAssign(false);S.sel=-1;
-  $("editBtn").setAttribute("aria-pressed",S.edit);$("editBtn").textContent="Edit keys: "+(S.edit?"on":"off");
-  $("fsEditToggle").textContent="Edit Keys: "+(S.edit?"On":"Off");
-  syncEd();paintAll();toast(S.edit?"Tap any key to edit its label and color":"Edit mode off");
-}
-$("editBtn").onclick=toggleEditMode;
-$("fsEditToggle").onclick=toggleEditMode;
-$("edLabel").oninput=function(){if(S.sel<0)return;S.labels[S.sel]=this.value.trim().slice(0,8);paint(S.sel)};
-$("edLabel").onchange=save;
-$("edColor").oninput=function(){if(S.sel<0)return;S.keys[S.sel]=this.value.toUpperCase();paint(S.sel)};
-$("edColor").onchange=save;
-$("edReset").onclick=function(){if(S.sel<0)return;S.labels[S.sel]="";syncEd();paint(S.sel);save()};
-
-/* Rotary Dial & Assign */
-function dialVal(){return S.dmode==="hue"?S.h:S.dmode==="sat"?S.s*3.6:S.l*3.6}
-function setHue(a,user){a=((Math.round(a)%360)+360)%360;if(S.snap)a=(Math.round(a/S.snap)*S.snap)%360;S.ang=a;
-if(S.dmode==="hue")S.h=a;else if(S.dmode==="sat")S.s=Math.round(a/3.6);else S.l=Math.max(4,Math.min(96,Math.round(a/3.6)));
-syncDial(user,false,true)}
-function syncDial(user,fromSl,keep){
-  if(!(fromSl&&S.sl==="rgb"))S.hex=hslHex(S.h,S.s,S.l);
-  if(!keep)S.ang=dialVal();
-  var H=S.h,Sa=S.s,L=S.l,g=S.dmode==="hue"?"conic-gradient(from 0deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)":S.dmode==="sat"?"conic-gradient(from 0deg,hsl("+H+",0%,"+L+"%),hsl("+H+",100%,"+L+"%))":"conic-gradient(from 0deg,hsl("+H+","+Sa+"%,4%),hsl("+H+","+Sa+"%,50%),hsl("+H+","+Sa+"%,96%))";
-  $("ring").style.setProperty("--rg",g);
-  $("knob").style.transform="rotate("+S.ang+"deg)";$("kinfo").style.transform="rotate("+(-S.ang)+"deg)";
-  $("angle").textContent=S.dmode==="hue"?Math.round(S.ang)+"°":(S.dmode==="sat"?S.s:S.l)+"%";
-  $("dhex").textContent=hexTxt(S.hex);$("hue").value=S.ang;
-  if(!S.assign)$("mode").textContent=S.dmode.toUpperCase();
-  setRing(S.hex);
-  if(user){click(600+(S.ang%15)*18,.015);S.shown=S.hex;$("sw").style.background=S.hex;$("out").textContent=fmt(S.hex,"DIAL");$("out").style.color=S.hex;updRo()}
-  if(!fromSl)slUpdate();
-}
-function setAssign(on){
-  S.assign=on;$("knob").classList.toggle("assign",on);D.body.classList.toggle("assigning",on);
-  $("mode").textContent=on?"ASSIGN":S.dmode.toUpperCase();
-  $("assignBtn").setAttribute("aria-pressed",on);$("fsAssign").setAttribute("aria-pressed",on);
-  $("assignBtn").textContent=on?"Tap a key to save this color":"Assign dial color to a key";
-  $("banner").textContent=on?"Assign mode: tap any key to save "+S.hex:"Tap a key to copy its color";
-}
-function toggleAssign(){click(1380,.05);buzz(25);if(!S.assign&&S.edit)toggleEditMode();setAssign(!S.assign)}
-$("assignBtn").onclick=toggleAssign;$("fsAssign").onclick=toggleAssign;
-
-var drag=false;
-function ang(e){var r=$("knob").getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))*180/Math.PI+90}
-var K=$("knob");
-K.addEventListener("pointerdown",function(e){drag=true;try{K.setPointerCapture(e.pointerId)}catch(x){}setHue(ang(e),true)});
-K.addEventListener("pointermove",function(e){if(drag)setHue(ang(e),true)});
-K.addEventListener("pointerup",function(){if(!drag)return;drag=false;if(!S.assign)announce(S.hex,"DIAL",true,"DIAL");else $("banner").textContent="Assign mode: tap any key to save "+S.hex});
-K
+   
